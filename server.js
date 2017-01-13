@@ -26,20 +26,18 @@ import {IP, PORT} from './client/scripts/config';
 
 const app = express();
 
-// 连接数据库
 mongodb();
 
-// 开发环境开启热部署
 if (config.env === 'development') {
   const webpackDevConfig = require('./webpack.config.dev.babel');
   const compiler = webpack(webpackDevConfig);
   app.use(require('webpack-dev-middleware')(compiler, {
-    noInfo: true, //如果设置该参数为 true，则不打印输出信息
-    cache: true, //开启缓存，增量编译
-    debug: true, //开启 debug 模式
+    noInfo: true, 
+    cache: true, 
+    debug: true, 
     stats: {
-      colors: true, //打印日志显示颜色
-      reasons: true //打印相关被引入的模块
+      colors: true, 
+      reasons: true 
     },
     publicPath: webpackDevConfig.output.publicPath
   }));
@@ -53,14 +51,12 @@ if (config.env === 'production') {
 }
 
 app.use(logger('dev'));
-app.use(bodyParser.json({limit: '20mb'}));//设置前端post提交最大内容
+app.use(bodyParser.json({limit: '20mb'}));
 app.use(bodyParser.urlencoded({limit: '20mb', extended: false}));
 app.use(cookieParser(config.cookieSecret));
 app.use(express.static(config.env === 'development' ? path.resolve(__dirname, './dev') : path.resolve(__dirname, './client')));
 
-// 设置 session
 const store = sessionStore();
-// Populates req.session
 const sessionOptions = {
   resave: false, // don't save session if unmodified
   saveUninitialized: false, // don't create session until something stored
@@ -78,8 +74,6 @@ const sessionOptions = {
 
 app.use(session(sessionOptions));
 
-// load routers
-//定义路由
 routes(app);
 
 //Render Initial HTML
@@ -102,7 +96,6 @@ const Html = ({content, store}) => {
       <link rel="apple-touch-icon" href="/favicon.ico">
    `;
 
-  //设置 manifest 为不存在的文件，防止部分浏览器缓存
   return (
     <html manifest="IGNORE.manifest">
     <head dangerouslySetInnerHTML={{ __html: headHtml }}/>
